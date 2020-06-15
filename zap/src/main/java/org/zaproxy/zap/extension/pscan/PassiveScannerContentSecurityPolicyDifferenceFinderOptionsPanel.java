@@ -55,7 +55,7 @@ class PassiveScannerContentSecurityPolicyDifferenceFinderOptionsPanel extends Ab
 
         JButton overridesButton =
                 new JButton(
-                        Constant.messages.getString("alert.optionspanel.button.overridesFilename"));
+                        Constant.messages.getString("pscan.options.csp.button.overridesFilename"));
         overridesButton.addActionListener(new FileChooserAction(getOverridesFilename()));
 
         JLabel overridesLabel = new JLabel("File with reference Content Security Policy");
@@ -69,15 +69,14 @@ class PassiveScannerContentSecurityPolicyDifferenceFinderOptionsPanel extends Ab
 
         int y = 0;
 
-        this.add(overridesLabel, LayoutHelper.getGBC(0, ++y, 2, 1.0, new Insets(2, 2, 2, 2)));
-        this.add(overridesPanel, LayoutHelper.getGBC(1, y, 2, 1.0, new Insets(2, 2, 2, 2)));
+        this.add(overridesLabel, LayoutHelper.getGBC(0, ++y, 3, 1.0, new Insets(2, 2, 2, 2)));
+        this.add(overridesPanel, LayoutHelper.getGBC(1, ++y, 2, 1.0, new Insets(2, 2, 2, 2)));
         this.add(new JLabel(""), LayoutHelper.getGBC(0, ++y, 2, 1.0, 1.0));
     }
 
     @Override
     public void initParam(Object obj) {
         OptionsParam optionsParam = (OptionsParam) obj;
-        PassiveScanParam pscanOptions = optionsParam.getParamSet(PassiveScanParam.class);
 
     }
 

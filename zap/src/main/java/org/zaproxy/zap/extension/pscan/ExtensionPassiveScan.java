@@ -68,6 +68,7 @@ public class ExtensionPassiveScan extends ExtensionAdaptor implements SessionCha
     }
 
     private PassiveScannerOptionsPanel passiveScannerOptionsPanel;
+    private PassiveScannerContentSecurityPolicyDifferenceFinderOptionsPanel passiveScannerContentSecurityPolicyDifferenceFinderOptionsPanel;
 
     public ExtensionPassiveScan() {
         super();
@@ -101,6 +102,7 @@ public class ExtensionPassiveScan extends ExtensionAdaptor implements SessionCha
         extensionHook.addSessionListener(this);
         if (getView() != null) {
             extensionHook.getHookView().addOptionPanel(getPassiveScannerOptionsPanel());
+            extensionHook.getHookView().addOptionPanel(getPassiveScannerOptionsPanel1());
             extensionHook
                     .getHookView()
                     .addOptionPanel(getOptionsPassiveScan(getPassiveScanThread()));
@@ -473,6 +475,13 @@ public class ExtensionPassiveScan extends ExtensionAdaptor implements SessionCha
             passiveScannerOptionsPanel = new PassiveScannerOptionsPanel(Constant.messages);
         }
         return passiveScannerOptionsPanel;
+    }
+
+    private PassiveScannerContentSecurityPolicyDifferenceFinderOptionsPanel getPassiveScannerOptionsPanel1() {
+        if (passiveScannerContentSecurityPolicyDifferenceFinderOptionsPanel == null) {
+            passiveScannerContentSecurityPolicyDifferenceFinderOptionsPanel = new PassiveScannerContentSecurityPolicyDifferenceFinderOptionsPanel(Constant.messages);
+        }
+        return passiveScannerContentSecurityPolicyDifferenceFinderOptionsPanel;
     }
 
     private OptionsPassiveScan getOptionsPassiveScan(PassiveScanThread passiveScanThread) {

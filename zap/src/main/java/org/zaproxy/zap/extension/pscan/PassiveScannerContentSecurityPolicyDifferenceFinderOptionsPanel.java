@@ -19,14 +19,18 @@
  */
 package org.zaproxy.zap.extension.pscan;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import javax.swing.*;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.zaproxy.zap.extension.pscan.PassiveScanParam;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.LayoutHelper;
-
-import javax.swing.*;
-import java.awt.*;
 
 /**
  * The GUI panel for options of the passive scanner.
@@ -40,22 +44,36 @@ import java.awt.*;
  *
  * @since 2.6.0
  */
-class PassiveScannerOptionsPanel extends AbstractParamPanel {
+class PassiveScannerContentSecurityPolicyDifferenceFinderOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;
 
     private final JCheckBox scanOnlyInScopeCheckBox;
     private final JCheckBox scanFuzzerMessagesCheckBox;
     private final ZapNumberSpinner maxAlertsPerRule;
+    private JTextField overridesFilename;
 
-    public PassiveScannerOptionsPanel(I18N messages) {
-        setName(messages.getString("pscan.options.main.name"));
+    public PassiveScannerContentSecurityPolicyDifferenceFinderOptionsPanel(I18N messages) {
+        setName("New Passive Scanner");
 
         scanOnlyInScopeCheckBox =
                 new JCheckBox(messages.getString("pscan.options.main.label.scanOnlyInScope"));
         scanFuzzerMessagesCheckBox =
                 new JCheckBox(messages.getString("pscan.options.main.label.scanFuzzerMessages"));
         maxAlertsPerRule = new ZapNumberSpinner();
+
+        JButton overridesButton =
+                new JButton(
+                        Constant.messages.getString("alert.optionspanel.button.overridesFilename"));
+        overridesButton.addActionListener(new FileChooserAction(getOverridesFilename()));
+
+        JLabel overridesLabel = new JLabel("File with reference Content Security Policy");
+        overridesLabel.setLabelFor(overridesButton);
+
+        JPanel overridesPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+        overridesPanel.add(getOverridesFilename());
+        overridesPanel.add(overridesButton);
+
         this.setLayout(new GridBagLayout());
 
         int y = 0;
@@ -66,6 +84,8 @@ class PassiveScannerOptionsPanel extends AbstractParamPanel {
         maxAlertsLabel.setLabelFor(maxAlertsPerRule);
         this.add(maxAlertsLabel, LayoutHelper.getGBC(0, ++y, 1, 1.0));
         this.add(maxAlertsPerRule, LayoutHelper.getGBC(1, y, 1, 1.0));
+        this.add(overridesLabel, LayoutHelper.getGBC(0, ++y, 2, 1.0, new Insets(2, 2, 2, 2)));
+        this.add(overridesPanel, LayoutHelper.getGBC(1, y, 2, 1.0, new Insets(2, 2, 2, 2)));
         this.add(new JLabel(""), LayoutHelper.getGBC(0, ++y, 2, 1.0, 1.0));
     }
 
@@ -92,5 +112,38 @@ class PassiveScannerOptionsPanel extends AbstractParamPanel {
     @Override
     public String getHelpIndex() {
         return "ui.dialogs.options.pscan.main";
+    }
+
+    private static class FileChooserAction implements ActionListener {
+
+        private final JTextField textField;
+
+        public FileChooserAction(JTextField bindTextField) {
+            this.textField = bindTextField;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+            String path = textField.getText();
+            if (path != null) {
+                File file = new File(path);
+                if (file.canRead() && !file.isDirectory()) {
+                    fileChooser.setSelectedFile(file);
+                }
+            }
+            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                final File selectedFile = fileChooser.getSelectedFile();
+
+                textField.setText(selectedFile.getAbsolutePath());
+            }
+        }
+    }
+
+    private JTextField getOverridesFilename() {
+        if (overridesFilename == null) {
+            overridesFilename = new JTextField(20);
+        }
+        return overridesFilename;
     }
 }
